@@ -20,9 +20,15 @@ void gpio_pin_status(uint8_t port) {
   printf("\n");
 }
 
+void gpio_pin_set(uint8_t *port, uint8_t pin) { *port |= (1 << pin); }
+
 int main() {
   uint8_t PORTA = 0x00;
   gpio_pin_status(PORTA);
+
+  gpio_pin_set(&PORTA, 4);
+  gpio_pin_set(&PORTA, 7);
+  gpio_pin_status(PORTA); // prints 10010000
 
   return 0;
 }
