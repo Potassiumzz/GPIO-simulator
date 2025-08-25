@@ -1,6 +1,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+/*
+ * Display the current status of the GPIO pins (8 bits) as individual bits.
+ * 1 = on, 0 = off
+ * */
 void gpio_pin_status(uint8_t port) {
   char binary[8];
   for (uint8_t i = 0; i < 8; i++) {
