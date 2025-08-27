@@ -34,15 +34,24 @@ void gpio_pin_set(uint8_t *port, uint8_t pin) { *port |= (1 << pin); }
  * */
 void gpio_pin_clear(uint8_t *port, uint8_t pin) { *port &= ~(1 << pin); }
 
+/*
+ * Toggle the value of a pin where
+ * @params *port is the address of a port (register)
+ * @params pin is the pin (bit) that has to be toggled, starting from 0 to 7.
+ * */
+void gpio_pin_toggle(uint8_t *port, uint8_t pin) { *port ^= (1 << pin); }
+
 int main() {
   uint8_t PORTA = 0x00;
-  gpio_pin_status(PORTA);
+  gpio_pin_status(PORTA); // prints 00000000
 
   gpio_pin_set(&PORTA, 4);
   gpio_pin_set(&PORTA, 7);
   gpio_pin_status(PORTA); // prints 10010000
   gpio_pin_clear(&PORTA, 7);
-  gpio_pin_status(PORTA);
+  gpio_pin_status(PORTA); // prints 00010000
+  gpio_pin_toggle(&PORTA, 4);
+  gpio_pin_status(PORTA); // prints 00000000
 
   return 0;
 }
