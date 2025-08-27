@@ -20,7 +20,19 @@ void gpio_pin_status(uint8_t port) {
   printf("\n");
 }
 
+/*
+ * Set the value of a pin as on (make a bit one) where
+ * @params *port is the address of a port (register)
+ * @params pin is the pin (bit) that has to be set as one, starting from 0 to 7.
+ * */
 void gpio_pin_set(uint8_t *port, uint8_t pin) { *port |= (1 << pin); }
+
+/*
+ * Clear the value of a pin (make a bit zero) where
+ * @params *port is the address of a port (register)
+ * @params pin is the pin (bit) that has to be cleared, starting from 0 to 7.
+ * */
+void gpio_pin_clear(uint8_t *port, uint8_t pin) { *port &= ~(1 << pin); }
 
 int main() {
   uint8_t PORTA = 0x00;
@@ -29,6 +41,8 @@ int main() {
   gpio_pin_set(&PORTA, 4);
   gpio_pin_set(&PORTA, 7);
   gpio_pin_status(PORTA); // prints 10010000
+  gpio_pin_clear(&PORTA, 7);
+  gpio_pin_status(PORTA);
 
   return 0;
 }
