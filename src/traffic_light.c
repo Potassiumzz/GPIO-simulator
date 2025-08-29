@@ -23,18 +23,20 @@ void traffic_light_cycle(uint8_t *port) {
       printf("YELLOW ");
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
-      if (*port == 0x06) {
+      if (*port == (YELLOW | GREEN)) {
         printf("YELLOW + GREEN ");
+        gpio_pin_status(*port);
+        sleep(2);
         light = RED;
         gpio_pin_clear(port, 2); // turn off the green light
-      } else if (*port == 0x03) {
+      } else if (*port == (YELLOW | RED)) {
         printf("YELLOW + RED ");
         gpio_pin_status(*port);
+        sleep(2);
         light = GREEN;
         gpio_pin_clear(port, 0); // turn off the red light
       }
       gpio_pin_status(*port);
-      sleep(2);
       break;
     case GREEN:
       printf("GREEN ");
