@@ -19,7 +19,8 @@ static struct TrafficLightFlags flags = {0};
  * */
 void toggle_yellow_light_mode() { flags.yellow_light_mode = !flags.yellow_light_mode; }
 
-void traffic_light_cycle(uint8_t *port) {
+void *traffic_light_cycle(void *arg) {
+  uint8_t *port = (uint8_t *)arg;
   enum TRAFFIC_LIGHTS light = RED;
 
   while (1) {
@@ -73,4 +74,5 @@ void traffic_light_cycle(uint8_t *port) {
       break;
     }
   }
+  return NULL;
 }
