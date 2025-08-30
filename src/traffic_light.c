@@ -6,15 +6,23 @@
 
 enum TRAFFIC_LIGHTS { RED = 1, YELLOW = 2, RED_YELLOW = 3, GREEN = 4, GREEN_YELLOW = 6 };
 
+struct TrafficLightFlags {
+  uint8_t yellow_light_mode;
+};
+
+static struct TrafficLightFlags flags = {0};
+
+/*
+ * Toggle between yellow light flashing forever or making the traffic light cycle continue as normal.
+ * Toggles the 5th GPIO pin, which is supposed to make the yellow light flash forever (make the 2nd pin's
+ * state on).
+ * */
+void toggle_yellow_light_mode() { flags.yellow_light_mode = !flags.yellow_light_mode; }
+
 void traffic_light_cycle(uint8_t *port) {
   enum TRAFFIC_LIGHTS light = RED;
-  *port ^= (1 << 5);
-  uint8_t loop_yellow_light = (*port >> 5) & 0x01;
 
   while (1) {
-    if (loop_yellow_light)
-      light = YELLOW;
-    // printf("loop: %d\n", loop_yellow_light);
     switch (light) {
     case RED:
       printf("RED ");
@@ -27,13 +35,16 @@ void traffic_light_cycle(uint8_t *port) {
     case YELLOW:
       printf("YELLOW ");
       gpio_pin_set(port, 1);
+      gpio_pin_toggle(port, 5);
       gpio_pin_status(*port);
-      while (loop_yellow_light) {
+      while (flags.yellow_light_mode) {
       }
+      gpio_pin_toggle(port, 5);
       light = RED;
       break;
     case RED_YELLOW:
       printf("YELLOW + RED ");
+      gpio_pin_set(port, 1);
       gpio_pin_status(*port);
       sleep(2);
       light = GREEN;
@@ -45,10 +56,16 @@ void traffic_light_cycle(uint8_t *port) {
       gpio_pin_set(port, 2);
       gpio_pin_status(*port);
       sleep(2);
-      light = GREEN_YELLOW;
+      if (flags.yellow_light_mode) {
+        gpio_pin_clear(port, 2); // turn off the green light before switching to yellow
+        light = YELLOW;
+      } else {
+        light = GREEN_YELLOW;
+      }
       break;
     case GREEN_YELLOW:
       printf("YELLOW + GREEN ");
+      gpio_pin_set(port, 1);
       gpio_pin_status(*port);
       sleep(2);
       light = RED;
