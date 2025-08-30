@@ -8,9 +8,13 @@ enum TRAFFIC_LIGHTS { RED = 1, YELLOW = 2, RED_YELLOW = 3, GREEN = 4, GREEN_YELL
 
 void traffic_light_cycle(uint8_t *port) {
   enum TRAFFIC_LIGHTS light = RED;
-  // uint8_t loop_yellow_light = (*port >> 5) & 0x01;
+  *port ^= (1 << 5);
+  uint8_t loop_yellow_light = (*port >> 5) & 0x01;
 
   while (1) {
+    if (loop_yellow_light)
+      light = YELLOW;
+    // printf("loop: %d\n", loop_yellow_light);
     switch (light) {
     case RED:
       printf("RED ");
@@ -24,6 +28,9 @@ void traffic_light_cycle(uint8_t *port) {
       printf("YELLOW ");
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
+      while (loop_yellow_light) {
+      }
+      light = RED;
       break;
     case RED_YELLOW:
       printf("YELLOW + RED ");
