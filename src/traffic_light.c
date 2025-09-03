@@ -1,4 +1,5 @@
 #include <gpio.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <traffic_light.h>
@@ -21,6 +22,9 @@ void toggle_yellow_light_mode() { flags.yellow_light_mode = !flags.yellow_light_
 
 void *traffic_light_cycle(void *arg) {
   uint8_t *port = (uint8_t *)arg;
+  struct FSMThreadArg *fsmThreadArg = (struct FSMThreadArg *)arg;
+  pthread_mutex_t lock = fsmThreadArg->lock;
+  pthread_cond_t cond = fsmThreadArg->cond;
   enum TRAFFIC_LIGHTS light = RED;
 
   while (1) {
@@ -38,8 +42,11 @@ void *traffic_light_cycle(void *arg) {
       gpio_pin_set(port, 1);
       gpio_pin_toggle(port, 5);
       gpio_pin_status(*port);
+      pthread_mutex_lock(&lock);
       while (flags.yellow_light_mode) {
+        pthread_cond_wait(&cond, &lock);
       }
+      pthread_mutex_unlock(&lock);
       gpio_pin_toggle(port, 5);
       light = RED;
       break;

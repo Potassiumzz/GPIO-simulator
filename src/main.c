@@ -5,15 +5,18 @@
 #include <traffic_light.h>
 #include <unistd.h>
 
-uint8_t PORTA = 0x00;
-
 int main() {
   pthread_t fsm_thread, isr_thread;
+  struct FSMThreadArg fsmThreadArg = {.PORTA = 0x00};
+
   pthread_create(&isr_thread, NULL, handle_interrupt, NULL);
-  pthread_create(&fsm_thread, NULL, traffic_light_cycle, &PORTA);
+  pthread_create(&fsm_thread, NULL, traffic_light_cycle, &fsmThreadArg);
 
   pthread_join(fsm_thread, NULL);
   pthread_join(isr_thread, NULL);
+
+  pthread_mutex_destroy(&fsmThreadArg.lock);
+  pthread_cond_destroy(&fsmThreadArg.cond);
 
   return 0;
 }
