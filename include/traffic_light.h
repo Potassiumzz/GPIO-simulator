@@ -15,6 +15,8 @@ struct FSMThreadArg {
   pthread_cond_t cond;
 };
 
+extern struct FSMThreadArg fsmThreadArg;
+
 void toggle_yellow_light_mode();
 void *traffic_light_cycle(void *arg);
 
