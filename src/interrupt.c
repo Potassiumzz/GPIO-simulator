@@ -1,6 +1,8 @@
-#include "gpio.h"
+#include <gpio.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <timer.h>
 #include <traffic_light.h>
 
 void *handle_interrupt(void *arg) {
@@ -15,4 +17,9 @@ void *handle_interrupt(void *arg) {
     printf("toggle yellow loop\n");
   }
   return NULL;
+}
+
+void timer_ISR() {
+  timer0.seconds++;
+  printf("%d seconds passed\n", timer0.seconds);
 }
