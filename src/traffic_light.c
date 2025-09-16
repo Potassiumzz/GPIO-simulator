@@ -7,6 +7,10 @@
 #include <unistd.h>
 
 enum TRAFFIC_LIGHTS { RED = 1, YELLOW = 2, RED_YELLOW = 3, GREEN = 4, GREEN_YELLOW = 6 };
+#define RED_C "\033[31m"
+#define GREEN_C "\033[32m"
+#define YELLOW_C "\033[33m"
+#define RESET_C "\033[0m"
 
 struct TrafficLightFlags {
   uint8_t yellow_light_mode;
@@ -29,7 +33,7 @@ void *traffic_light_cycle(void *arg) {
   while (1) {
     switch (light) {
     case RED:
-      printf("RED ");
+      printf(RED_C "RED " RESET_C);
       gpio_pin_set(port, 0);
       gpio_pin_clear(port, 1); // turn off the yellow light
       gpio_pin_status(*port);
@@ -37,7 +41,7 @@ void *traffic_light_cycle(void *arg) {
       light = RED_YELLOW;
       break;
     case YELLOW:
-      printf("YELLOW ");
+      printf(YELLOW_C "YELLOW " RESET_C);
       gpio_pin_set(port, 1);
       gpio_pin_toggle(port, 5);
       gpio_pin_status(*port);
@@ -50,7 +54,7 @@ void *traffic_light_cycle(void *arg) {
       light = RED;
       break;
     case RED_YELLOW:
-      printf("YELLOW + RED ");
+      printf(YELLOW_C "YELLOW " RED_C "+ RED " RESET_C);
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
       wait_sec(2);
@@ -58,7 +62,7 @@ void *traffic_light_cycle(void *arg) {
       gpio_pin_clear(port, 0); // turn off the red light
       break;
     case GREEN:
-      printf("GREEN ");
+      printf(GREEN_C "GREEN " RESET_C);
       gpio_pin_clear(port, 1); // turn off the yellow light
       gpio_pin_set(port, 2);
       gpio_pin_status(*port);
@@ -71,7 +75,7 @@ void *traffic_light_cycle(void *arg) {
       }
       break;
     case GREEN_YELLOW:
-      printf("YELLOW + GREEN ");
+      printf(YELLOW_C "YELLOW " GREEN_C "+ GREEN " RESET_C);
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
       wait_sec(2);
