@@ -1,4 +1,5 @@
 #include <interrupt.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <time.h>
 #include <timer.h>
@@ -9,11 +10,16 @@ static const uint8_t OCR = 250;   // Output Compare Register
 static const uint8_t PRESCALER = 8;
 
 struct Timer timer0 = {.seconds = 0};
+struct TimerThread timer0_thread = {.timer_lock = PTHREAD_MUTEX_INITIALIZER,
+                                    .timer_cond = PTHREAD_COND_INITIALIZER};
 
 void wait_sec(uint16_t seconds) {
   uint16_t time_to_reach = timer0.seconds + seconds;
+  pthread_mutex_lock(&timer0_thread.timer_lock);
   while (timer0.seconds < time_to_reach) {
+    pthread_cond_wait(&timer0_thread.timer_cond, &timer0_thread.timer_lock);
   }
+  pthread_mutex_unlock(&timer0_thread.timer_lock);
 }
 
 void *cpu_timer(void *arg) {

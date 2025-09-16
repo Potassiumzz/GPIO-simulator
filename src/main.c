@@ -21,7 +21,9 @@ int main() {
   pthread_join(fsm_thread, NULL);
 
   pthread_mutex_destroy(&fsmThreadArg.lock);
+  pthread_mutex_destroy(&timer0_thread.timer_lock);
   pthread_cond_destroy(&fsmThreadArg.cond);
+  pthread_cond_destroy(&timer0_thread.timer_cond);
 
   return 0;
 }

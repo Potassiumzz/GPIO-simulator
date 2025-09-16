@@ -20,6 +20,9 @@ void *handle_interrupt(void *arg) {
 }
 
 void timer_ISR() {
+  pthread_mutex_lock(&timer0_thread.timer_lock);
   timer0.seconds++;
+  pthread_cond_broadcast(&timer0_thread.timer_cond);
+  pthread_mutex_unlock(&timer0_thread.timer_lock);
   // printf("%d seconds passed\n", timer0.seconds);
 }
