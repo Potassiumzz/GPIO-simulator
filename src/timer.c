@@ -1,4 +1,5 @@
 #include <interrupt.h>
+#include <stdint.h>
 #include <time.h>
 #include <timer.h>
 #include <unistd.h>
@@ -8,6 +9,12 @@ static const uint8_t OCR = 250;   // Output Compare Register
 static const uint8_t PRESCALER = 8;
 
 struct Timer timer0 = {.seconds = 0};
+
+void wait_sec(uint16_t seconds) {
+  uint16_t time_to_reach = timer0.seconds + seconds;
+  while (timer0.seconds < time_to_reach) {
+  }
+}
 
 void *cpu_timer(void *arg) {
   /*

@@ -14,11 +14,11 @@ int main() {
 
   pthread_create(&timer_thread, NULL, cpu_timer, NULL);
   pthread_create(&isr_thread, NULL, handle_interrupt, &fsmThreadArg);
-  // pthread_create(&fsm_thread, NULL, traffic_light_cycle, &fsmThreadArg);
+  pthread_create(&fsm_thread, NULL, traffic_light_cycle, &fsmThreadArg);
 
   pthread_join(timer_thread, NULL);
   pthread_join(isr_thread, NULL);
-  // pthread_join(fsm_thread, NULL);
+  pthread_join(fsm_thread, NULL);
 
   pthread_mutex_destroy(&fsmThreadArg.lock);
   pthread_cond_destroy(&fsmThreadArg.cond);

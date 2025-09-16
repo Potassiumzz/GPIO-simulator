@@ -10,5 +10,6 @@ struct Timer {
 extern struct Timer timer0;
 
 void *cpu_timer(void *arg);
+void wait_sec(uint16_t seconds);
 
 #endif

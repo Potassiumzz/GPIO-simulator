@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <timer.h>
 #include <traffic_light.h>
 #include <unistd.h>
 
@@ -32,7 +33,7 @@ void *traffic_light_cycle(void *arg) {
       gpio_pin_set(port, 0);
       gpio_pin_clear(port, 1); // turn off the yellow light
       gpio_pin_status(*port);
-      sleep(2);
+      wait_sec(2);
       light = RED_YELLOW;
       break;
     case YELLOW:
@@ -52,7 +53,7 @@ void *traffic_light_cycle(void *arg) {
       printf("YELLOW + RED ");
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
-      sleep(2);
+      wait_sec(2);
       light = GREEN;
       gpio_pin_clear(port, 0); // turn off the red light
       break;
@@ -61,7 +62,7 @@ void *traffic_light_cycle(void *arg) {
       gpio_pin_clear(port, 1); // turn off the yellow light
       gpio_pin_set(port, 2);
       gpio_pin_status(*port);
-      sleep(2);
+      wait_sec(2);
       if (flags.yellow_light_mode) {
         gpio_pin_clear(port, 2); // turn off the green light before switching to yellow
         light = YELLOW;
@@ -73,7 +74,7 @@ void *traffic_light_cycle(void *arg) {
       printf("YELLOW + GREEN ");
       gpio_pin_set(port, 1);
       gpio_pin_status(*port);
-      sleep(2);
+      wait_sec(2);
       light = RED;
       gpio_pin_clear(port, 2); // turn off the green light
       break;

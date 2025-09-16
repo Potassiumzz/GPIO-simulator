@@ -21,5 +21,5 @@ void *handle_interrupt(void *arg) {
 
 void timer_ISR() {
   timer0.seconds++;
-  printf("%d seconds passed\n", timer0.seconds);
+  // printf("%d seconds passed\n", timer0.seconds);
 }
