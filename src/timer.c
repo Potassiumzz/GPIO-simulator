@@ -13,6 +13,10 @@ struct Timer timer0 = {.seconds = 0};
 struct TimerThread timer0_thread = {.timer_lock = PTHREAD_MUTEX_INITIALIZER,
                                     .timer_cond = PTHREAD_COND_INITIALIZER};
 
+/*
+ * Delay the program execution for a specific time. Kind of like a custom "sleep" function.
+ * @params seconds is the amount of seconds to delay the program execution.
+ * */
 void wait_sec(uint16_t seconds) {
   uint16_t time_to_reach = timer0.seconds + seconds;
   pthread_mutex_lock(&timer0_thread.timer_lock);
