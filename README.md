@@ -37,8 +37,8 @@ In this simulation:
     - Toggle pin
     - Show pin status in console
 
-    > [!NOTE]
-    > Input/Output configuration is not included, though it exists in real hardware GPIO.
+> [!NOTE]
+> Input/Output configuration is not included, though it exists in real hardware GPIO.
 
 - **interrupt.c / interrupt.h** - Functions to simulate interrupts.
 
