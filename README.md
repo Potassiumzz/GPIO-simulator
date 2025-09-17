@@ -8,6 +8,36 @@ This project simulates **GPIO pin behaviour** without an actual microcontroller.
 
 The purpose is to demonstrate how software (libraries) might be written for a microcontroller so that developers can interact with hardware.
 
+For this simulation, we make a few assumptions about our *fake* microcontroller:
+
+- **CPU clock speed** = **2 KHz** (chosen to make it easier to understand and debug; real MCUs run much faster).
+
+- **Prescaler** = **8** (fixed in this version, but in real hardware it’s usually configurable).
+
+- **Output Compare Register (OCR)** = **250** (so the timer reaches it every 1000 cycles, i.e. almost exactly 1 second).
+
+## Logic of the `cpu_timer`
+
+- One CPU cycle at 2 KHz = **500 µs** (2000 cycles/second).
+
+- Each loop, we add **500,000 ns (500 µs)** to `tv_nsec`.
+
+    - Example: if current monotonic clock time is `1000 ns`, the thread sleeps until `1000 + 500,000 ns`.
+
+    - This is done using `clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, ...)`, which is very accurate because it uses the OS kernel’s monotonic clock (never goes backwards, unlike real-time clock).
+
+- When tv_nsec reaches **1,000,000,000 ns (1 s)**, it rolls over to 0 and increments `tv_sec`.
+
+- The **prescaler counter** increments every 500 µs. After 8 increments = **4000 µs = 4 ms**.
+
+- The timer variable increments every 4 ms.
+
+    - To reach 1 second: `1000 ms / 4 ms = 250`.
+
+    - So when `timer == 250`, we trigger `timer_ISR()`.
+
+- `timer_ISR()` increments the global `seconds`.
+
 > [!NOTE]
 > This is not a perfect GPIO simulator. There are many ways to achieve the same goal. This implementation uses threads to mimic hardware concurrency.
 
